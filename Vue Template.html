@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E-commerce</title>
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v6.4.2/css/all.css'> 
+  <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css'>
+  <script src='https://unpkg.com/vue@next'></script>
+  <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js'></script>
+</head>
+<body>
+
+<!-- CSS Code here-->
+<style>
+div h3 {
+   color: #2F5A78;
+   text-decoration: underline;
+}
+.left-buttons {
+  translate: 0px -25px;
+}
+.right-buttons {
+  translate: 0px -20px;
+}
+.search {
+  translate: 0px 30px;
+}
+.navbar-brand {
+  translate: 0px 25px;
+}
+#searchDropdown {
+  translate: 0px 40px;
+}
+.dropdown-clip {
+  translate: 0px -25px;
+  z-index: 1;
+}
+.carousel-img {
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+}
+.dropdown-sidebar-enter-active,
+.dropdown-sidebar-leave-active {
+  transition: all .3s ease-in-out;
+  transform: auto;
+}
+.dropdown-sidebar-enter-from,
+.dropdown-sidebar-leave-to {
+  opacity:0;
+  transform: translateX(-200px);
+}
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all .3s ease-in-out;
+  transform: auto;
+}
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity:0;
+  transform: translateY(-300px);
+}
+.products-enter-active,
+.products-leave-active {
+  transition: all .5s ease-in-out;
+}
+.products-enter-from {
+  opacity: 0;
+  transform: rotateY(180deg);
+}
+.products-leave-to {
+  opacity: 0;
+  transform: rotateY(180deg);
+}
+.cartDetails-enter-active {
+  transition: all .5s ease-in-out;
+}
+.cartDetails-enter-from  {
+  opacity: 0;
+  transform: translateY(300px);
+}
+.login-enter-active {
+  transition: all .5s ease-in-out;
+}
+.login-enter-from  {
+  opacity: 0;
+  transform: translateY(300px);
+}
+.card-img {
+  width: 100%;
+  height: 250px;
+  object-fit: contain;
+}
+.card-flip {
+  perspective: 1000px;
+  &:hover .flip,
+  &.hover .flip {
+    transform: rotateY(180deg);
+  }
+}
+.card-flip,
+.front,
+.back {
+  width: 100%;
+  height: 480px;
+}
+.flip {
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+.front,
+.back {
+  z-index: 1;
+  backface-visibility: hidden;
+  position: absolute;
+}
+.front {
+  transform: rotateY(0deg);
+}
+.back {
+  transform: rotateY(180deg);
+  translate: 0px 35px
+}
+.btn-toggle {
+  padding: .25rem .5rem;
+  font-weight: 600;
+  background-color: transparent;
+}
+.btn-toggle::before {
+  width: 1.25em;
+  line-height: 0;
+  content: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba%280,0,0,.5%29' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 14l6-6-6-6'/%3e%3c/svg%3e");
+  transition: transform .35s ease;
+  transform-origin: .5em 50%;
+}
+.btn-toggle[aria-expanded="true"] {
+  text-decoration: underline;
+}
+.btn-toggle[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+.btn-toggle[aria-expanded="false"] {
+  color:black
+}
+.btn-toggle[aria-expanded="false"]:hover {
+  text-decoration: underline;
+}
+.btn-toggle-nav a {
+  text-decoration: none;
+}
+.btn-toggle-nav a:hover,
+.btn-toggle-nav a:focus {
+  text-decoration: underline;
+}
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgb(177, 177, 177);
+  opacity: 1; /* Firefox */
+}
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: rgb(177, 177, 177);
+}
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+  color: rgb(177, 177, 177);
+ }
+</style>
+<!-- CSS Code here-->
+
+<!-- HTML Code Here -->
+<div id="app">
+  <nav class="navbar navbar-expand-lg sticky-top border-top border-5 border-primary bg-light shadow mb-5" style="height: 120px">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="bi bi-three-dots h3"></i></span>
+      </button>
+      <div @mouseenter="displayAccountMenu = false" class="flex-fill navbar-text ms-auto d-flex justify-content-end position-relative">
+        <div class="flex-fill">
+          <div class="d-flex align-items-end flex-column position-absolute">
+            <div class="ms-2 left-buttons collapse navbar-collapse" id="navbarText">
+              <button @mouseenter="displayAccountMenu = false" @click="sidebar = !sidebar; cartDetails = false; checkout = false" class="btn btn-sm"
+                data-bs-toggle="tooltip" data-bs-placement="bottom" title="Menu">
+                <i class="fa-solid fa-bars pt-1 h4"></i>
+              </button>
+              <button @mouseenter="displayAccountMenu = false" @click="cartDetails = false; checkout = false; showHistoryItems = false; keywords = ''; sidebar = false; addToHistory()" 
+                class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Home">
+                <i class="fa-solid fa-house h4"></i>
+              </button>
+              <button @mouseover="displayAccountMenu = true" class="btn btn-sm me-2"  id="accountDropdown" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-circle-user h3"></i></button>
+              <button @mouseenter="displayAccountMenu = false" @click="login = !login; cartDetails = false" class="btn btn-sm btn-dark mb-1"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button>
+            </div>
+            <div @mouseleave="displayAccountMenu = false" class="dropdown-clip overflow-hidden" id="account">
+              <transition name="dropdown">
+                <div v-if="displayAccountMenu" class="list-group" aria-labelledby="accountDropdown">
+                  <a class="list-group-item list-group-item-action list-group-item-dark" href=""><i class="fa-solid fa-user me-2"></i>View Profile</a>
+                  <a class="list-group-item list-group-item-action list-group-item-dark" href=""><i class="fa-solid fa-user-gear me-2"></i>Account Settings</a>
+                  <a class="list-group-item list-group-item-action list-group-item-dark" href=""><i class="fa-solid fa-clock-rotate-left me-2"></i>Order History</a>
+                </div>
+              </transition>
+            </div>
+          </div>
+          <div class="w-100 d-flex align-items-end flex-column position-absolute">
+            <search  class="search w-50" v-model="keywords" @add-to-history="addToHistory" @show-history="showHistory" id="search" aria-haspopup="true"></search>
+            <div class="w-75 dropdown-clip overflow-hidden" id="searchDropdown">
+            <transition name="dropdown">
+              <div v-if="showHistoryItem" class="list-group" aria-labelledby="search">
+                <div @click="activeHistory(search)" v-for="(search) in history" :key="search" class="list-group-item list-group-item-dark list-group-item-action d-flex justify-content-start align-items-center w-50">
+                  <i class="fa-solid fa-clock-rotate-left me-2"></i>
+                  <div>{{search}}</div>
+                </div>
+              </div>
+            </transition>
+            </div>
+          </div>
+        </div> 
+      <div class="me-2 d-flex align-items-end flex-column position-absolute">
+        <div class="right-buttons">
+          <span class="fw-bold" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Total"><curr :amt="cartTotal"></curr></span>
+          <button @click="cartDetails = true; sidebar = false; checkout = false" @mouseenter="displayCart = !displayCart" @mouseleave="displayCart = !displayCart" 
+            class="btn btn-sm mx-1 position-relative" id="cartDropdown" aria-haspopup="true" aria-expanded="false"
+            data-bs-toggle="tooltip" data-bs-placement="left" title="Cart Details">
+            <i class="fa fa-shopping-cart h4"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-success">{{cartTotalObjects}}</span>
+          </button>
+          <button @click="emptyCart()" class="btn btn-sm" id="trash" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Empty Cart">
+            <i class="fa-solid fa-trash-can h4"></i>
+          </button>
+        </div>
+        <div class="dropdown-clip overflow-hidden">
+          <transition name="dropdown">
+            <div v-if="displayCart && !cartDetails" class="list-group" aria-labelledby="cartDropdown">
+              <div v-for="(item, index) in cart" :key="index" class="list-group-item list-group-item-dark d-flex justify-content-between align-items-center">
+                <span class="badge bg-secondary me-2 rounded-circle">{{item.qty}}</span>
+                <div>{{item.product.name}}</div>
+                <div class="ms-3 fw-bold"><curr :amt="Number(item.product.price)*item.qty"></curr></div>
+              </div>
+            </div>
+          </transition>
+        </div>   
+      </div>
+      <!-- Example of company brand with IU logo-->
+      <a href="#" class="navbar-brand">
+        <img src="https://res.cloudinary.com/iubh/image/upload/v1625822241/IT%20-%20Epos%20/Logo/iu-logo-150x150.png" width="45" width="45" alt="IU - Internationale Hochschule">
+      </a>
+      </div>
+    </div>
+  </nav>
+  <div id="carousel" class="carousel slide mb-3" v-if="!cartDetails && !sidebar && !checkout" data-bs-interval="4000" data-bs-pause="false" data-bs-ride="carousel" data-bs-theme="dark">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner" style="height: 400px">
+        <div class="carousel-item active">
+            <img class="carousel-img" src="https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg" alt="laptop">
+        </div>
+        <div class="carousel-item">
+            <img class="carousel-img" src="https://thumbs.dreamstime.com/z/computer-monitor-11021534.jpg?w=2048" alt="monitor">
+        </div>
+        <div class="carousel-item">
+          <img class="carousel-img" src="https://thumbs.dreamstime.com/z/professional-video-graphic-card-high-performance-video-graphic-card-workstation-computer-isolated-white-professional-video-232786542.jpg?w=2048" alt="graphic card">
+      </div>
+    </div>
+    <button class="carousel-control-prev text-dark" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+        <span class="fa-solid fa-circle-left h1" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next text-dark" type="button" data-bs-target="#carousel" data-bs-slide="next">
+        <span class="fa-solid fa-circle-right h1" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+  <div class="container w-50 my-5" v-if="!sidebar && !cartDetails && !checkout">
+    <div class="card bg-info-subtle shadow">
+      <div class="card-body">
+        <h1 class="card-title text-center">Top Sales</h1>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex">
+    <transition name="dropdown-sidebar">
+      <nav v-if="sidebar" class="left-sidebar flex-shrink-0 p-3" style="width: 280px;">
+        <span class="fs-5 fw-semibold">Menu</span>
+        <div class="border-top border-secondary-subtle my-3"></div>
+        <ul class="list-unstyled ps-0">
+          <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="false"
+            @click="activeHistory('Printer'); keywords=''">
+              Printers
+            </button>
+            <div class="collapse ms-5" id="home-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Inkjet</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Laser</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">3D</a></li>
+              </ul>
+            </div>
+          </li> 
+          <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false"
+            @click="activeHistory('PC'); keywords=''">
+              Computer & Tablet
+            </button>
+            <div class="collapse ms-5" id="dashboard-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Desktop</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Laptop</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Tablet</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Components</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false"
+            @click="activeHistory('Monitor'); keywords=''">
+              Monitors
+            </button>
+            <div class="collapse ms-5" id="orders-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="#" class="link-body-emphasis d-inline-flex">LCD</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">LED</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">OLED</a></li>
+                <li><a href="#" class="link-body-emphasis d-inline-flex">Plasma</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="border-top border-secondary-subtle my-3"></li>
+        </ul>
+      </nav>
+    </transition>
+    <div class="flex-fill">
+      <section class="container products" id="products" v-if="!cartDetails && !checkout" @click="showHistoryItem = false"> 
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4">
+          <transition-group name="products" appear>
+          <div v-for="(item, index) in filteredProducts" :key="item.id" id="item-list" class="col">
+            <product :item="item" @add-to-cart="addToCart"></product>
+          </div>
+          </transition-group>
+        </div>
+      </section>
+      <section class="container cart-details" id="cartDetails" v-if="cartDetails">
+        <transition name="cartDetails" appear>
+        <div class="container">
+          <h1>Cart Details</h1>
+          <table class="table table-hover">
+            <caption class="text-end h3"><b>Total </b><curr :amt="cartTotal"></curr></caption>
+            <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">Item</th>
+                <th scope="col" class="text-center">Qty</th>
+                <th scope="col" class="text-end">Price</th>
+                <th scope="col" class="text-end">Sub-Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in cart" :key="item.product.id" class="align-middle">
+                <td class="text-center">
+                  <div class="btn-group" role="group" aria-label="Basic example">
+                    <button @click="addToCart(item.product)" class="btn btn-success">+</button>
+                    <button @click="removeFromCart(index)" class="btn btn-outline-danger">-</button>
+                  </div>
+                </td>
+                <td>
+                  <img class="img-thumbnail" :src="item.product.image" :alt="item.name" style="height: 70px; width: 70px; object-fit: contain;">
+                </td>
+                <th scope="row" >{{item.product.name}}</th>
+                <td class="text-center">{{item.qty}}</td>
+                <td class="text-end"><curr :amt="Number(item.product.price)"></curr></td>
+                <td class="text-end"><curr :amt="Number(item.product.price)*item.qty"></curr></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-between">
+            <button @click="cartDetails = !cartDetails" class="btn btn-success mt-5">
+              Keep Shopping
+            </button>
+            <button @click="checkout = !checkout; cartDetails = false" role="button" class="btn btn-outline-primary text-decoration-none rounded mt-5">
+              Checkout
+            </button>
+        </div>
+        </transition>
+      </section>
+      <section class="checkout container" id="checkout" v-if="checkout">
+        <div class="row g-5">
+          <div class="col-md-5 col-lg-4 order-md-last">
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+              <span class="text-primary">Your Order</span>
+              <span class="badge bg-primary rounded-pill">{{cartTotalObjects}}</span>
+            </h4>
+            <ul class="list-group mb-3">
+              <li v-for="(item, index) in cart" :key="item.product.id" class="list-group-item d-flex justify-content-between align-items-center">
+                  <span class="badge bg-secondary me-2 rounded-circle">{{item.qty}}</span>
+                  <div>{{item.product.name}}</div>
+                  <div class="ms-3 fw-bold"><curr :amt="Number(item.product.price)*item.qty"></curr></div>
+              </li>
+              <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
+                <div class="text-success">
+                  <h6 class="my-0">Promo code</h6>
+                </div>
+                <span class="text-success">{{promo}}</span>
+                <span class="text-success">-<curr :amt="discount"></curr></span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between">
+                <span>Total (USD)</span>
+                <strong><curr :amt="cartTotal"></curr></strong>
+              </li>
+            </ul>
+            <form class="card p-2">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Promo code: try 'NEWCUSTOMER'" v-model="redeemCode">
+                <button type="submit" class="btn btn-secondary" disabled>Redeem</button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-7 col-lg-8">
+            <h4 class="mb-3">Billing address</h4>
+            <form>
+              <div class="row g-3">
+                <div class="col-sm-6">
+                  <label for="firstName" class="form-label">Employee First Name<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="firstName" placeholder="First" value="" required>
+                </div>
+                <div class="col-sm-6">
+                  <label for="lastName" class="form-label">Employee Last Name<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="lastName" placeholder="Last" value="" required>
+                </div>
+                <div class="col-12">
+                  <label for="email" class="form-label">Employee email<span class="text-danger">*</span></label>
+                  <div class="input-group has-validation">
+                    <span class="input-group-text">@</span>
+                    <input type="email" class="form-control" id="email" placeholder="employee@example.com" required>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="phone" class="form-label">Employee Phone <span class="text-body-tertiary">(Optional)</span></label>
+                  <input type="phone" class="form-control" id="phone" placeholder="### ### #####">
+                </div>
+                <div class="col-12">
+                  <label for="company" class="form-label">Company Name<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="company" placeholder="Company" required>
+                </div>
+                <div class="col-12">
+                  <label for="address" class="form-label">Address<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="address" placeholder="Company Address" required>
+                </div>
+                <div class="col-12">
+                  <label for="address2" class="form-label">Address 2 <span class="text-body-tertiary">(Optional)</span></label>
+                  <input type="text" class="form-control" id="address2" placeholder="Employee Building and Room">
+                </div>
+                <div class="col-md-5">
+                  <label for="country" class="form-label">Country<span class="text-danger">*</span></label>
+                  <select class="form-select" id="country" required>
+                    <option value="select">Select a Country...</option>
+                    <option value="AFG">Afghanistan</option>
+                    <option value="ALA">Åland Islands</option>
+                    <option value="ALB">Albania</option>
+                    <option value="DZA">Algeria</option>
+                    <option value="ASM">American Samoa</option>
+                    <option value="AND">Andorra</option>
+                    <option value="AGO">Angola</option>
+                    <option value="AIA">Anguilla</option>
+                    <option value="ATA">Antarctica</option>
+                    <option value="ATG">Antigua and Barbuda</option>
+                    <option value="ARG">Argentina</option>
+                    <option value="ARM">Armenia</option>
+                    <option value="ABW">Aruba</option>
+                    <option value="AUS">Australia</option>
+                    <option value="AUT">Austria</option>
+                    <option value="AZE">Azerbaijan</option>
+                    <option value="BHS">Bahamas</option>
+                    <option value="BHR">Bahrain</option>
+                    <option value="BGD">Bangladesh</option>
+                    <option value="BRB">Barbados</option>
+                    <option value="BLR">Belarus</option>
+                    <option value="BEL">Belgium</option>
+                    <option value="BLZ">Belize</option>
+                    <option value="BEN">Benin</option>
+                    <option value="BMU">Bermuda</option>
+                    <option value="BTN">Bhutan</option>
+                    <option value="BOL">Bolivia, Plurinational State of</option>
+                    <option value="BES">Bonaire, Sint Eustatius and Saba</option>
+                    <option value="BIH">Bosnia and Herzegovina</option>
+                    <option value="BWA">Botswana</option>
+                    <option value="BVT">Bouvet Island</option>
+                    <option value="BRA">Brazil</option>
+                    <option value="IOT">British Indian Ocean Territory</option>
+                    <option value="BRN">Brunei Darussalam</option>
+                    <option value="BGR">Bulgaria</option>
+                    <option value="BFA">Burkina Faso</option>
+                    <option value="BDI">Burundi</option>
+                    <option value="KHM">Cambodia</option>
+                    <option value="CMR">Cameroon</option>
+                    <option value="CAN">Canada</option>
+                    <option value="CPV">Cape Verde</option>
+                    <option value="CYM">Cayman Islands</option>
+                    <option value="CAF">Central African Republic</option>
+                    <option value="TCD">Chad</option>
+                    <option value="CHL">Chile</option>
+                    <option value="CHN">China</option>
+                    <option value="CXR">Christmas Island</option>
+                    <option value="CCK">Cocos (Keeling) Islands</option>
+                    <option value="COL">Colombia</option>
+                    <option value="COM">Comoros</option>
+                    <option value="COG">Congo</option>
+                    <option value="COD">Congo, the Democratic Republic of the</option>
+                    <option value="COK">Cook Islands</option>
+                    <option value="CRI">Costa Rica</option>
+                    <option value="CIV">Côte d'Ivoire</option>
+                    <option value="HRV">Croatia</option>
+                    <option value="CUB">Cuba</option>
+                    <option value="CUW">Curaçao</option>
+                    <option value="CYP">Cyprus</option>
+                    <option value="CZE">Czech Republic</option>
+                    <option value="DNK">Denmark</option>
+                    <option value="DJI">Djibouti</option>
+                    <option value="DMA">Dominica</option>
+                    <option value="DOM">Dominican Republic</option>
+                    <option value="ECU">Ecuador</option>
+                    <option value="EGY">Egypt</option>
+                    <option value="SLV">El Salvador</option>
+                    <option value="GNQ">Equatorial Guinea</option>
+                    <option value="ERI">Eritrea</option>
+                    <option value="EST">Estonia</option>
+                    <option value="ETH">Ethiopia</option>
+                    <option value="FLK">Falkland Islands (Malvinas)</option>
+                    <option value="FRO">Faroe Islands</option>
+                    <option value="FJI">Fiji</option>
+                    <option value="FIN">Finland</option>
+                    <option value="FRA">France</option>
+                    <option value="GUF">French Guiana</option>
+                    <option value="PYF">French Polynesia</option>
+                    <option value="ATF">French Southern Territories</option>
+                    <option value="GAB">Gabon</option>
+                    <option value="GMB">Gambia</option>
+                    <option value="GEO">Georgia</option>
+                    <option value="DEU">Germany</option>
+                    <option value="GHA">Ghana</option>
+                    <option value="GIB">Gibraltar</option>
+                    <option value="GRC">Greece</option>
+                    <option value="GRL">Greenland</option>
+                    <option value="GRD">Grenada</option>
+                    <option value="GLP">Guadeloupe</option>
+                    <option value="GUM">Guam</option>
+                    <option value="GTM">Guatemala</option>
+                    <option value="GGY">Guernsey</option>
+                    <option value="GIN">Guinea</option>
+                    <option value="GNB">Guinea-Bissau</option>
+                    <option value="GUY">Guyana</option>
+                    <option value="HTI">Haiti</option>
+                    <option value="HMD">Heard Island and McDonald Islands</option>
+                    <option value="VAT">Holy See (Vatican City State)</option>
+                    <option value="HND">Honduras</option>
+                    <option value="HKG">Hong Kong</option>
+                    <option value="HUN">Hungary</option>
+                    <option value="ISL">Iceland</option>
+                    <option value="IND">India</option>
+                    <option value="IDN">Indonesia</option>
+                    <option value="IRN">Iran, Islamic Republic of</option>
+                    <option value="IRQ">Iraq</option>
+                    <option value="IRL">Ireland</option>
+                    <option value="IMN">Isle of Man</option>
+                    <option value="ISR">Israel</option>
+                    <option value="ITA">Italy</option>
+                    <option value="JAM">Jamaica</option>
+                    <option value="JPN">Japan</option>
+                    <option value="JEY">Jersey</option>
+                    <option value="JOR">Jordan</option>
+                    <option value="KAZ">Kazakhstan</option>
+                    <option value="KEN">Kenya</option>
+                    <option value="KIR">Kiribati</option>
+                    <option value="PRK">Korea, Democratic People's Republic of</option>
+                    <option value="KOR">Korea, Republic of</option>
+                    <option value="KWT">Kuwait</option>
+                    <option value="KGZ">Kyrgyzstan</option>
+                    <option value="LAO">Lao People's Democratic Republic</option>
+                    <option value="LVA">Latvia</option>
+                    <option value="LBN">Lebanon</option>
+                    <option value="LSO">Lesotho</option>
+                    <option value="LBR">Liberia</option>
+                    <option value="LBY">Libya</option>
+                    <option value="LIE">Liechtenstein</option>
+                    <option value="LTU">Lithuania</option>
+                    <option value="LUX">Luxembourg</option>
+                    <option value="MAC">Macao</option>
+                    <option value="MKD">Macedonia, the former Yugoslav Republic of</option>
+                    <option value="MDG">Madagascar</option>
+                    <option value="MWI">Malawi</option>
+                    <option value="MYS">Malaysia</option>
+                    <option value="MDV">Maldives</option>
+                    <option value="MLI">Mali</option>
+                    <option value="MLT">Malta</option>
+                    <option value="MHL">Marshall Islands</option>
+                    <option value="MTQ">Martinique</option>
+                    <option value="MRT">Mauritania</option>
+                    <option value="MUS">Mauritius</option>
+                    <option value="MYT">Mayotte</option>
+                    <option value="MEX">Mexico</option>
+                    <option value="FSM">Micronesia, Federated States of</option>
+                    <option value="MDA">Moldova, Republic of</option>
+                    <option value="MCO">Monaco</option>
+                    <option value="MNG">Mongolia</option>
+                    <option value="MNE">Montenegro</option>
+                    <option value="MSR">Montserrat</option>
+                    <option value="MAR">Morocco</option>
+                    <option value="MOZ">Mozambique</option>
+                    <option value="MMR">Myanmar</option>
+                    <option value="NAM">Namibia</option>
+                    <option value="NRU">Nauru</option>
+                    <option value="NPL">Nepal</option>
+                    <option value="NLD">Netherlands</option>
+                    <option value="NCL">New Caledonia</option>
+                    <option value="NZL">New Zealand</option>
+                    <option value="NIC">Nicaragua</option>
+                    <option value="NER">Niger</option>
+                    <option value="NGA">Nigeria</option>
+                    <option value="NIU">Niue</option>
+                    <option value="NFK">Norfolk Island</option>
+                    <option value="MNP">Northern Mariana Islands</option>
+                    <option value="NOR">Norway</option>
+                    <option value="OMN">Oman</option>
+                    <option value="PAK">Pakistan</option>
+                    <option value="PLW">Palau</option>
+                    <option value="PSE">Palestinian Territory, Occupied</option>
+                    <option value="PAN">Panama</option>
+                    <option value="PNG">Papua New Guinea</option>
+                    <option value="PRY">Paraguay</option>
+                    <option value="PER">Peru</option>
+                    <option value="PHL">Philippines</option>
+                    <option value="PCN">Pitcairn</option>
+                    <option value="POL">Poland</option>
+                    <option value="PRT">Portugal</option>
+                    <option value="PRI">Puerto Rico</option>
+                    <option value="QAT">Qatar</option>
+                    <option value="REU">Réunion</option>
+                    <option value="ROU">Romania</option>
+                    <option value="RUS">Russian Federation</option>
+                    <option value="RWA">Rwanda</option>
+                    <option value="BLM">Saint Barthélemy</option>
+                    <option value="SHN">Saint Helena, Ascension and Tristan da Cunha</option>
+                    <option value="KNA">Saint Kitts and Nevis</option>
+                    <option value="LCA">Saint Lucia</option>
+                    <option value="MAF">Saint Martin (French part)</option>
+                    <option value="SPM">Saint Pierre and Miquelon</option>
+                    <option value="VCT">Saint Vincent and the Grenadines</option>
+                    <option value="WSM">Samoa</option>
+                    <option value="SMR">San Marino</option>
+                    <option value="STP">Sao Tome and Principe</option>
+                    <option value="SAU">Saudi Arabia</option>
+                    <option value="SEN">Senegal</option>
+                    <option value="SRB">Serbia</option>
+                    <option value="SYC">Seychelles</option>
+                    <option value="SLE">Sierra Leone</option>
+                    <option value="SGP">Singapore</option>
+                    <option value="SXM">Sint Maarten (Dutch part)</option>
+                    <option value="SVK">Slovakia</option>
+                    <option value="SVN">Slovenia</option>
+                    <option value="SLB">Solomon Islands</option>
+                    <option value="SOM">Somalia</option>
+                    <option value="ZAF">South Africa</option>
+                    <option value="SGS">South Georgia and the South Sandwich Islands</option>
+                    <option value="SSD">South Sudan</option>
+                    <option value="ESP">Spain</option>
+                    <option value="LKA">Sri Lanka</option>
+                    <option value="SDN">Sudan</option>
+                    <option value="SUR">Suriname</option>
+                    <option value="SJM">Svalbard and Jan Mayen</option>
+                    <option value="SWZ">Swaziland</option>
+                    <option value="SWE">Sweden</option>
+                    <option value="CHE">Switzerland</option>
+                    <option value="SYR">Syrian Arab Republic</option>
+                    <option value="TWN">Taiwan, Province of China</option>
+                    <option value="TJK">Tajikistan</option>
+                    <option value="TZA">Tanzania, United Republic of</option>
+                    <option value="THA">Thailand</option>
+                    <option value="TLS">Timor-Leste</option>
+                    <option value="TGO">Togo</option>
+                    <option value="TKL">Tokelau</option>
+                    <option value="TON">Tonga</option>
+                    <option value="TTO">Trinidad and Tobago</option>
+                    <option value="TUN">Tunisia</option>
+                    <option value="TUR">Turkey</option>
+                    <option value="TKM">Turkmenistan</option>
+                    <option value="TCA">Turks and Caicos Islands</option>
+                    <option value="TUV">Tuvalu</option>
+                    <option value="UGA">Uganda</option>
+                    <option value="UKR">Ukraine</option>
+                    <option value="ARE">United Arab Emirates</option>
+                    <option value="GBR">United Kingdom</option>
+                    <option value="USA">United States</option>
+                    <option value="UMI">United States Minor Outlying Islands</option>
+                    <option value="URY">Uruguay</option>
+                    <option value="UZB">Uzbekistan</option>
+                    <option value="VUT">Vanuatu</option>
+                    <option value="VEN">Venezuela, Bolivarian Republic of</option>
+                    <option value="VNM">Viet Nam</option>
+                    <option value="VGB">Virgin Islands, British</option>
+                    <option value="VIR">Virgin Islands, U.S.</option>
+                    <option value="WLF">Wallis and Futuna</option>
+                    <option value="ESH">Western Sahara</option>
+                    <option value="YEM">Yemen</option>
+                    <option value="ZMB">Zambia</option>
+                    <option value="ZWE">Zimbabwe</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="state" class="form-label">State<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="state" placeholder="State / Region" required>
+                </div>
+                <div class="col-md-3">
+                  <label for="zip" class="form-label">Postcode / Zip<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="zip" placeholder="####" required>
+                </div>
+              </div>
+              <hr class="my-4">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="same-address">
+                <label class="form-check-label" for="same-address">Shipping address is the same as billing address</label>
+              </div>
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="save-info">
+                <label class="form-check-label" for="save-info">Save this information for next time</label>
+              </div>
+              <hr class="my-4">
+              <button class="w-100 btn btn-primary btn-lg my-5" type="submit">Continue to checkout</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<!-- HTML Code Here -->
+
+<!-- Vue Code Here -->
+<script>
+ // Snippet for tooltip 
+
+
+// App Script goes here
+const App = Vue.createApp( {
+  data() {
+      return {
+        sidebar: false,
+        cartDetails: false,
+        showHistoryItem: false,
+        displayAccountMenu: false,
+        displayCart: false,
+        checkout: false,
+        keywords: '',
+        redeemCode: '',
+        discount: 0,
+        promo: '',
+        historyTemp: [''],
+        history: [],
+        cart: [],
+        products : []
+      }
+  },
+  mounted() {
+    (() => {
+      'use strict'
+      const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+    })();
+    (() => {
+      'use strict'
+
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      var forms = document.querySelectorAll('.needs-validation')
+
+      // Loop over them and prevent submission
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })();
+  },
+  created() {
+    fetch("")
+      .then(response => response.json())
+      .then(data => {
+        this.products = data;
+      });
+  },
+  computed: {
+      filteredProducts() {
+        if(!this.history.includes(this.keywords) || this.keywords!='') {
+          return this.products.filter( item => (item.name.toLowerCase().includes(this.historyTemp[0].toLowerCase()) || item.description.toLowerCase().includes(this.historyTemp[0].toLowerCase())
+          || item.image_title.toLowerCase().includes(this.historyTemp[0].toLowerCase())))
+        }else {
+          return this.products
+        }
+      },
+      cartTotal() {
+      let sum = 0
+      for (let key in this.cart) {
+        sum += this.cart[key].product.price * this.cart[key].qty
+      }
+      if(this.redeemCode == 'NEWCUSTOMER') {
+        this.discount = sum * 0.2
+        this.promo = '20% off'
+        return sum - (this.discount)
+      }else {
+        this.discount = 0
+        this.promo = ''
+        return sum
+      }
+    },
+    cartTotalObjects: function () {
+      let qty = 0
+      for (let key in this.cart) {
+        qty += this.cart[key].qty
+      }
+      return qty
+    }
+  },
+  methods: {
+    addToCart(product) {
+      let whichProduct
+      let existing = this.cart.filter(function (item, index) {
+        if (item.product.id == Number(product.id)) {
+          whichProduct = index
+          return true
+        } else {
+          return false
+        }
+      })
+      if (existing.length) {
+        this.cart[whichProduct].qty++
+      } else {
+        this.cart.push({ product: product, qty: 1 })
+      }
+    },
+    removeFromCart: function(id) {
+      if (this.cart[id].qty > 1) {
+        this.cart[id].qty--
+      } else {
+        this.cart.splice(id, 1)
+      }
+    },  
+    emptyCart() {
+      for (let i = 0; i < this.cart.length; i++) {
+        this.cart[i].qty = 0;
+      }
+      this.cart= [];
+    },
+    addToHistory() {
+      if(!this.historyTemp.includes(this.keywords) && this.keywords!='') {
+        this.history.unshift(this.keywords)
+      }
+      this.historyTemp.unshift(this.keywords)
+      this.showHistoryItem = false
+    },
+    showHistory() {
+      this.showHistoryItem = !this.showHistoryItem
+    },
+    activeHistory(search) {
+      this.historyTemp.unshift(search)
+      this.keywords = search
+    }
+  }
+})
+App.component('product', {
+  props: ['item'],
+  emits: ['addToCart'],
+  template: `
+  <div class="card-flip">
+    <div class="flip">
+      <div class="front">
+        <div class="card rounded-4 shadow border">
+          <div class="card-body">
+            <h4 class="card-title border-bottom text-center">{{item.name}}</h4>
+            <img class="card-img" :src="item.image" :alt="item.name">
+            <div class="card-footer bg-white fw-bolder text-end fs-4">
+              <curr :amt="item.price"></curr>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="back">
+        <div class="card rounded-4 shadow border">
+          <div class="card-body">  
+          <h5 class="card-title border-bottom">{{item.name}}</h5>
+          <p class="card-text align-text-center lh-sm" style="font-size: 14px">{{item.description}}</p>
+          <div class="card-footer bg-white">
+            <button @click="$emit('addToCart', item)" class="btn btn-sm btn-success">Add to Cart</button>
+          </div>
+        </div> 
+      </div>
+    </div>
+  </div>
+  `
+})
+App.component('curr', {
+  props: ['amt'],
+  template: '{{dollar(amt)}}',
+  methods: {
+    dollar(value) {
+       return '$' + Number.parseFloat(value).toFixed(2);
+    }
+  }
+})
+App.component('search', {
+  props: ['modelValue'],
+  emits: ['addToHistory', 'showHistory'],
+  template: `
+    <div class="input-group mx-auto">
+      <input @click="$emit('showHistory')" :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" @keyup.enter="$emit('addToHistory')"
+        type="text" class="form-control border-primary-subtle bg-secondary-subtle" placeholder="Search articles" aria-label="Fancy Search Input" aria-describedby="button-search">
+      <button @click="$emit('addToHistory')" class="btn btn-primary" id="button-search"><i class="bi bi-search h4"></i></button>
+    </div>
+  `
+})
+
+App.mount('#app')
+</script>
+<!-- Vue Code Here -->
+
+</body>
+</html>
