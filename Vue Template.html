@@ -789,7 +789,7 @@ const App = Vue.createApp( {
     })();
   },
   created() {
-    fetch("https://github.com/fabiodecena/Order-Form/blob/main/products.txt")
+    fetch("https://raw.githubusercontent.com/fabiodecena/Order-Form/main/products.txt")
       .then(response => response.json())
       .then(data => {
         this.products = data;
