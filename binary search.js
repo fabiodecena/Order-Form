@@ -15,5 +15,7 @@ function binarySearch(arr,val) {      // function declaration with two parameter
     return 'Value not found!' // if the value is not found, return this message.
 }
 
-let myList = [-23, -12, -5, 1, 7, 24, 56, 99] // list have to be sorted!
-console.log(binarySearch(myList, 24)) // call the function and print the result to the console.
+let myList1 = [-23, -12, -5, 1, 7, 24, 56, 99] // list have to be sorted!
+console.log(binarySearch(myList1, -5)) // call the function and print the result to the console.
+let myList2 = ['a','c','d','f','j','l','n','r','w','z'] // the array can also contain values lexically sorted.
+console.log(binarySearch(myList2, 'l')) // call the function and print the result to the console.
