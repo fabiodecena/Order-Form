@@ -1,5 +1,5 @@
-function binarySearch(arr,val) {      // function declaration.     
-    let start = 0, end = arr.length-1;     // variable declaration and assignement: assigned zero (first) index of the list to start and the last index of the list to end. 
+function binarySearch(arr,val) {      // function declaration with two parameters: list and value we are looking for.    
+    let start = 0, end = arr.length-1;     // set two variables: start and end. start is the first index of the list, end is the last index of the list. 
     while (start <= end) {      // set a while loop that iterate until the start var is not 'crossing' the end of the list.
         let mid = Math.floor((start + end) / 2)  //set mid var as the middle index of the list (floor division).
         if (arr[mid] == val) {     // if the value of the middle index is equal to the value we are looking for, return the index of the value.
